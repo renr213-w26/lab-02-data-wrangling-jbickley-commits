@@ -15,6 +15,7 @@ library(tidyverse)
 ```
 
 # Questions
+\newpage
 
 ## Part 1
 
@@ -32,7 +33,8 @@ Illinois has the greatest number of counties at 102, and Wisconsin has the lowes
 ### Question 2
 
 ```{r}
-midwest_duplicate <- midwest |> group_by(county) |> summarize(count = n()) |> filter(count >= 2) |> arrange(desc(count))
+midwest_duplicate <- midwest |> group_by(county) |> summarize(count = n()) |> 
+  filter(count >= 2) |> arrange(desc(count))
 midwest_duplicate
 ```
 
@@ -41,8 +43,11 @@ midwest_duplicate
 ### Question 3
 
 ```{r}
-midwest |> filter(popdensity > 25000) |> select(county, state, popdensity, poptotal, area) |> arrange(desc(popdensity))
-midwest |> select(county, state, popdensity, poptotal, area) |> filter(popdensity == max(popdensity))
+midwest |> filter(popdensity > 25000) |> select(county, state, 
+  popdensity, poptotal, area) |> 
+  arrange(desc(popdensity))
+midwest |> select(county, state, popdensity, poptotal, area) |> 
+  filter(popdensity == max(popdensity))
 ```
 
 \newpage
@@ -78,7 +83,8 @@ midwest |> select(county, state, percbelowpoverty, percollege) |>
   filter((percbelowpoverty <20 & percollege >40) | (percbelowpoverty > 45 & percollege <8))
 
 midwest_outliers <- midwest |> select(county, state, percbelowpoverty, percollege) |> 
-  mutate(potential_outlier = if_else((percbelowpoverty <20 & percollege >40) | (percbelowpoverty > 45 & percollege <8), "Yes", "No")) |>
+  mutate(potential_outlier = if_else((percbelowpoverty <20 & percollege >40) |   
+  (percbelowpoverty > 45 & percollege <8), "Yes", "No")) |>  
   arrange(potential_outlier)
 midwest_outliers
 
@@ -96,9 +102,13 @@ College Degree by Midwestern State")
 
 ### Question 7
 ```{r}
-midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |> arrange(desc(state_pop))
+midwest |> group_by(state) |> 
+  summarise(state_pop = sum(poptotal)) |>  
+  arrange(desc(state_pop))
 
-midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |> mutate(proportion_pop = state_pop/sum(state_pop)) |> arrange(desc(proportion_pop))
+midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |>
+  mutate(proportion_pop = state_pop/sum(state_pop)) |> 
+  arrange(desc(proportion_pop))
 
 
 
@@ -108,7 +118,9 @@ Illinois is most populous with 27.2% of the population of the Midwest living the
 
 ### Question 8
 ```{r}
-state_poverty <- midwest |> group_by(state) |> summarise(mean_percbelowpoverty = mean(percbelowpoverty)) |> select(state, mean_percbelowpoverty)
+state_poverty <- midwest |> group_by(state) |> 
+  summarise(mean_percbelowpoverty = mean(percbelowpoverty)) |> 
+  select(state, mean_percbelowpoverty)
 state_poverty |> arrange(mean_percbelowpoverty)
 ```
 Michigan has the highest mean percent below poverty at 14.2% and Indiana has the lowest at 10.3%
@@ -117,3 +129,48 @@ Michigan has the highest mean percent below poverty at 14.2% and Indiana has the
 ## Part 2
 
 ### Question 9
+
+```{r}
+df <- tibble(
+  var_1 = c(10, 20, 30, 40, 50),
+  var_2 = c("Pizza", "Burger", "Pizza", "Pizza", "Burger"),
+  var_3 = c("Apple", "Apple", "Pear", "Pear", "Banana")
+)
+
+df |>
+  arrange(var_2)
+
+df |>
+  group_by(var_2)
+
+df |>
+  group_by(var_2) |>
+  summarize(mean_var_1 = mean(var_1))
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1))
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+df |>
+  group_by(var_2, var_3) |>
+  mutate(mean_var_1 = mean(var_1))
+```
+A) This code chunk arranges in ascending order (Alphabetical because its a string) of the var_2 column. 
+B) This code alone does not change the displayed dataframe, unlike A) it doesn't reorder anything it stays in order originally input, however, it does group the var_2 into groups of the same string so the pizzas together and the burgers together, and allows for further analysis by the group like averages and max in a particular group with the summarise() 
+
+C) This first considers the groups of var_2 so the pizzas and burgers get put together, then it asks what is the mean of the var_1 for the pizzas and for the burgers and outputs it. 
+
+D)  This groups first into groups with distinct combinations of Var_2 and 3, so for example Burgers with Apples, Burger's with Bananas, and so on. Within these distinct groups it calcualtes the mean of var_1. We also get a message saying it grouped outputs by var_2, which is what group remains after the summary operation, so future functions on the group apply as if its grouped by var_2.
+
+E) Fundamentally the same as D, but does not generate the message because we have used .groups = "drop" to remove all remaining groupings, so you could not for example use another summarize() because there are no more groupings. .groups() controls what grouping if any remains after the summarize operation as it consolidates the rows.
+
+F) The first one is the same as E), but the 2nd one does something quite different as the mutate() does not operate on the groups, it instead creates a new variable that takes the mean(var_1) for EACH row, so essentially in this case does nothing but copy var_1 because there is only 1 entry per row. Mutate() is more used if we wanted to say add 2 vars in each row, and not consider groups, summaries() acts on groups.
+
