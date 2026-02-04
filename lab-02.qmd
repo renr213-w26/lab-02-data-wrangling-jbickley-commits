@@ -1,13 +1,11 @@
 ---
 title: "Lab 2 - Data wrangling"
-author: "John Q. Student"
-date: "June 24, 1497"
+author: "Jakob Bickley"
+date: "Feb 4, 2026"
 format: 
   html: default # for speed
   pdf: default # for final output
-
 ---
-
 
 ```{r}
 #| eval: true
@@ -16,41 +14,163 @@ format:
 library(tidyverse)
 ```
 
-
 # Questions
+\newpage
 
 ## Part 1
 
 ### Question 1
 
+```{r}
+midwest <- midwest
+midwest |> group_by(state)|> summarize(n = n()) |> arrange(desc(n))
+```
+
+Illinois has the greatest number of counties at 102, and Wisconsin has the lowest at 72, across Midwest states.
 
 \newpage
 
 ### Question 2
 
+```{r}
+midwest_duplicate <- midwest |> group_by(county) |> summarize(count = n()) |> 
+  filter(count >= 2) |> arrange(desc(count))
+midwest_duplicate
+```
+
 \newpage
 
 ### Question 3
+
+```{r}
+midwest |> filter(popdensity > 25000) |> select(county, state, 
+  popdensity, poptotal, area) |> 
+  arrange(desc(popdensity))
+midwest |> select(county, state, popdensity, poptotal, area) |> 
+  filter(popdensity == max(popdensity))
+```
+
+\newpage
+
+### Question 4
+
+The distribution of population density of counties is unimodal and extremely right-skewed. A typical Midwestern county has population density of `r summarise(midwest, median_density = median(popdensity))` people per unit area. The middle 50% of the counties have population densities between `r summarise(midwest, lower = quantile(popdensity, .25))` to `r summarise(midwest, lower = quantile(popdensity, .75))` people per unit area.
+\# Numbers are inline code 
+\# Used AI to get quantile() function
+
 \newpage
 
 ### Question 5
+```{r}
+midwest |>mutate(metro = if_else(inmetro == 1, "Yes", "No")) |> group_by(state, metro) |> 
+  summarise(n = n()) |>
+  group_by(state) |>
+  mutate(proportion_urban = n/sum(n)) |>
+  select(state, metro, proportion_urban)
+```
 
 \newpage
 
 ### Question 6
+```{r}
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter(percbelowpoverty > 45, percollege <8)
+
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter(percbelowpoverty <20 , percollege >40)
+
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter((percbelowpoverty <20 & percollege >40) | (percbelowpoverty > 45 & percollege <8))
+
+midwest_outliers <- midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  mutate(potential_outlier = if_else((percbelowpoverty <20 & percollege >40) |   
+  (percbelowpoverty > 45 & percollege <8), "Yes", "No")) |>  
+  arrange(potential_outlier)
+midwest_outliers
+
+midwest_outliers |>  ggplot(aes(x = percollege, y= percbelowpoverty, shape = state,
+color = potential_outlier)) +
+geom_point() +
+labs(
+y = "Percent Below Poverty (%)",
+x = "Percent with a College Degree (%)",
+title = "Percent Population Below Poverty vs Percent Population with a
+College Degree by Midwestern State")
+```
 
 \newpage
 
 ### Question 7
+```{r}
+midwest |> group_by(state) |> 
+  summarise(state_pop = sum(poptotal)) |>  
+  arrange(desc(state_pop))
 
+midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |>
+  mutate(proportion_pop = state_pop/sum(state_pop)) |> 
+  arrange(desc(proportion_pop))
+
+
+
+```
+Illinois is most populous with 27.2% of the population of the Midwest living there, and Wisconsin is least populous with 11.6% of the population living there.
 \newpage
 
 ### Question 8
-
+```{r}
+state_poverty <- midwest |> group_by(state) |> 
+  summarise(mean_percbelowpoverty = mean(percbelowpoverty)) |> 
+  select(state, mean_percbelowpoverty)
+state_poverty |> arrange(mean_percbelowpoverty)
+```
+Michigan has the highest mean percent below poverty at 14.2% and Indiana has the lowest at 10.3%
 \newpage
 
 ## Part 2
 
-
 ### Question 9
+
+```{r}
+df <- tibble(
+  var_1 = c(10, 20, 30, 40, 50),
+  var_2 = c("Pizza", "Burger", "Pizza", "Pizza", "Burger"),
+  var_3 = c("Apple", "Apple", "Pear", "Pear", "Banana")
+)
+
+df |>
+  arrange(var_2)
+
+df |>
+  group_by(var_2)
+
+df |>
+  group_by(var_2) |>
+  summarize(mean_var_1 = mean(var_1))
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1))
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+df |>
+  group_by(var_2, var_3) |>
+  summarize(mean_var_1 = mean(var_1), .groups = "drop")
+
+df |>
+  group_by(var_2, var_3) |>
+  mutate(mean_var_1 = mean(var_1))
+```
+A) This code chunk arranges in ascending order (Alphabetical because its a string) of the var_2 column. 
+B) This code alone does not change the displayed dataframe, unlike A) it doesn't reorder anything it stays in order originally input, however, it does group the var_2 into groups of the same string so the pizzas together and the burgers together, and allows for further analysis by the group like averages and max in a particular group with the summarise() 
+
+C) This first considers the groups of var_2 so the pizzas and burgers get put together, then it asks what is the mean of the var_1 for the pizzas and for the burgers and outputs it. 
+
+D)  This groups first into groups with distinct combinations of Var_2 and 3, so for example Burgers with Apples, Burger's with Bananas, and so on. Within these distinct groups it calcualtes the mean of var_1. We also get a message saying it grouped outputs by var_2, which is what group remains after the summary operation, so future functions on the group apply as if its grouped by var_2.
+
+E) Fundamentally the same as D, but does not generate the message because we have used .groups = "drop" to remove all remaining groupings, so you could not for example use another summarize() because there are no more groupings. .groups() controls what grouping if any remains after the summarize operation as it consolidates the rows.
+
+F) The first one is the same as E), but the 2nd one does something quite different as the mutate() does not operate on the groups, it instead creates a new variable that takes the mean(var_1) for EACH row, so essentially in this case does nothing but copy var_1 because there is only 1 entry per row. Mutate() is more used if we wanted to say add 2 vars in each row, and not consider groups, summaries() acts on groups.
 
