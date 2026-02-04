@@ -21,8 +21,16 @@ library(tidyverse)
 
 ## Part 1
 
+
+
 ### Question 1
 
+
+```{r}
+midwest <- midwest
+midwest |> group_by(state)|> summarize(n = n()) |> arrange(desc(n))
+```
+Illinois has the greatest number of counties at 102, and Wisconsin has the lowest at 72, across Midwest states.
 
 \newpage
 
