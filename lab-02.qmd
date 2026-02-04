@@ -57,9 +57,7 @@ The distribution of population density of counties is unimodal and extremely rig
 
 ### Question 5
 ```{r}
-midwest |>
-  mutate(metro = if_else(inmetro == 1, "Yes", "No")) |>
-  group_by(state, metro) |> 
+midwest |>mutate(metro = if_else(inmetro == 1, "Yes", "No")) |> group_by(state, metro) |> 
   summarise(n = n()) |>
   group_by(state) |>
   mutate(proportion_urban = n/sum(n)) |>
@@ -69,6 +67,30 @@ midwest |>
 \newpage
 
 ### Question 6
+```{r}
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter(percbelowpoverty > 45, percollege <8)
+
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter(percbelowpoverty <20 , percollege >40)
+
+midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  filter((percbelowpoverty <20 & percollege >40) | (percbelowpoverty > 45 & percollege <8))
+
+midwest_outliers <- midwest |> select(county, state, percbelowpoverty, percollege) |> 
+  mutate(potential_outlier = if_else((percbelowpoverty <20 & percollege >40) | (percbelowpoverty > 45 & percollege <8), "Yes", "No")) |>
+  arrange(potential_outlier)
+midwest_outliers
+
+midwest_outliers |>  ggplot(aes(x = percollege, y= percbelowpoverty, shape = state,
+color = potential_outlier)) +
+geom_point() +
+labs(
+y = "Percent Below Poverty (%)",
+x = "Percent with a College Degree (%)",
+title = "Percent Population Below Poverty vs Percent Population with a
+College Degree by Midwestern State")
+```
 
 \newpage
 
