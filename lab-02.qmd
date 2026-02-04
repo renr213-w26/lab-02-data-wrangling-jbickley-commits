@@ -95,7 +95,15 @@ College Degree by Midwestern State")
 \newpage
 
 ### Question 7
+```{r}
+midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |> arrange(desc(state_pop))
 
+midwest |> group_by(state) |> summarise(state_pop = sum(poptotal)) |> mutate(proportion_pop = state_pop/sum(state_pop)) |> arrange(desc(proportion_pop))
+
+
+
+```
+Illinois is most populous with 27.2% of the population of the Midwest living there, and Wisconsin is least populous with 11.6% of the population living there.
 \newpage
 
 ### Question 8

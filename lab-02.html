@@ -318,7 +318,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="question-7" class="level3">
 <h3 class="anchored" data-anchor-id="question-7">Question 7</h3>
-<div style="page-break-after: always;"></div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>midwest <span class="sc">|&gt;</span> <span class="fu">group_by</span>(state) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">state_pop =</span> <span class="fu">sum</span>(poptotal)) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(state_pop))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 2
+  state state_pop
+  &lt;chr&gt;     &lt;int&gt;
+1 IL     11430602
+2 OH     10847115
+3 MI      9295297
+4 IN      5544159
+5 WI      4891769</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>midwest <span class="sc">|&gt;</span> <span class="fu">group_by</span>(state) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">state_pop =</span> <span class="fu">sum</span>(poptotal)) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">proportion_pop =</span> state_pop<span class="sc">/</span><span class="fu">sum</span>(state_pop)) <span class="sc">|&gt;</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(proportion_pop))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 3
+  state state_pop proportion_pop
+  &lt;chr&gt;     &lt;int&gt;          &lt;dbl&gt;
+1 IL     11430602          0.272
+2 OH     10847115          0.258
+3 MI      9295297          0.221
+4 IN      5544159          0.132
+5 WI      4891769          0.116</code></pre>
+</div>
+</div>
+<p>Illinois is most populous with 27.2% of the population of the Midwest living there, and Wisconsin is least populous with 11.6% of the population living there. </p>
 </section>
 <section id="question-8" class="level3">
 <h3 class="anchored" data-anchor-id="question-8">Question 8</h3>
