@@ -5,9 +5,7 @@ date: "Feb 4, 2026"
 format: 
   html: default # for speed
   pdf: default # for final output
-
 ---
-
 
 ```{r}
 #| eval: true
@@ -16,25 +14,23 @@ format:
 library(tidyverse)
 ```
 
-
 # Questions
 
 ## Part 1
 
-
-
 ### Question 1
-
 
 ```{r}
 midwest <- midwest
 midwest |> group_by(state)|> summarize(n = n()) |> arrange(desc(n))
 ```
+
 Illinois has the greatest number of counties at 102, and Wisconsin has the lowest at 72, across Midwest states.
 
 \newpage
 
 ### Question 2
+
 ```{r}
 midwest_duplicate <- midwest |> group_by(county) |> summarize(count = n()) |> filter(count >= 2) |> arrange(desc(count))
 midwest_duplicate
@@ -43,11 +39,19 @@ midwest_duplicate
 \newpage
 
 ### Question 3
+
 ```{r}
 midwest |> filter(popdensity > 25000) |> select(county, state, popdensity, poptotal, area) |> arrange(desc(popdensity))
 midwest |> select(county, state, popdensity, poptotal, area) |> filter(popdensity == max(popdensity))
 ```
 
+\newpage
+
+### Question 4
+
+The distribution of population density of counties is unimodal and extremely right-skewed. A typical Midwestern county has population density of `r summarise(midwest, median_density = median(popdensity))` people per unit area. The middle 50% of the counties have population densities between `r summarise(midwest, lower = quantile(popdensity, .25))` to `r summarise(midwest, lower = quantile(popdensity, .75))` people per unit area.
+\# Numbers are inline code 
+\# Used AI to get quantile() function
 
 \newpage
 
@@ -69,6 +73,4 @@ midwest |> select(county, state, popdensity, poptotal, area) |> filter(popdensit
 
 ## Part 2
 
-
 ### Question 9
-
