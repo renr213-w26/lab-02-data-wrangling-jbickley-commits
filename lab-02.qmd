@@ -107,7 +107,11 @@ Illinois is most populous with 27.2% of the population of the Midwest living the
 \newpage
 
 ### Question 8
-
+```{r}
+state_poverty <- midwest |> group_by(state) |> summarise(mean_percbelowpoverty = mean(percbelowpoverty)) |> select(state, mean_percbelowpoverty)
+state_poverty |> arrange(mean_percbelowpoverty)
+```
+Michigan has the highest mean percent below poverty at 14.2% and Indiana has the lowest at 10.3%
 \newpage
 
 ## Part 2
