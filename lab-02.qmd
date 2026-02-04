@@ -35,6 +35,10 @@ Illinois has the greatest number of counties at 102, and Wisconsin has the lowes
 \newpage
 
 ### Question 2
+```{r}
+midwest_duplicate <- midwest |> group_by(county) |> summarize(count = n()) |> filter(count >= 2) |> arrange(desc(count))
+midwest_duplicate
+```
 
 \newpage
 
